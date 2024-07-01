@@ -1,0 +1,33 @@
+{
+  "name": "use-megamind",
+  "version": "0.0.1",
+  "license": "MIT",
+  "description": "will write later",
+  "main": "dist/useMegamind.js",
+  "types": "dist/useMegamind.d.ts",
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.5.3"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "files": [
+    "dist/use-megamind.js",
+    "dist/use-megamind.js.map",
+    "dist/use-megamind.d.ts",
+    "dist/use-megamind.d.ts.map"
+  ],
+  "homepage": "https://github.com/p32929/use-megamind",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/p32929/use-megamind.git"
+  },
+  "keywords": [],
+  "author": "p32929"
+}
