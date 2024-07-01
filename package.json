@@ -1,8 +1,8 @@
 {
   "name": "use-megamind",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "MIT",
-  "description": "will write later",
+  "description": "A React hook for managing asynchronous function calls with ease, including loading state management, error handling, and customizable options for delayed or repeated calls.",
   "main": "dist/use-megamind.js",
   "jsnext:main": "dist/use-megamind.js",
   "module": "dist/use-megamind.js",
@@ -31,6 +31,14 @@
     "type": "git",
     "url": "git+https://github.com/p32929/use-megamind.git"
   },
-  "keywords": [],
+  "keywords": [
+    "react",
+    "hook",
+    "async",
+    "loading",
+    "error handling",
+    "delay",
+    "repeated calls"
+  ],
   "author": "p32929"
 }
