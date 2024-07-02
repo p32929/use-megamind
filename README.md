@@ -55,6 +55,7 @@ export default function Home() {
 > functionParams: The async function parameters, one by one ( Default: null ) 
 
 Yes, You will get intellisense like this
+
 ![Screenshot (132)](https://github.com/p32929/use-megamind/assets/6418354/d7d10894-4be9-41fb-a2c8-0902289783c2)
 
 
