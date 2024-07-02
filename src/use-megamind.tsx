@@ -47,7 +47,7 @@ const useMegamind = <T extends (...args: any[]) => Promise<any>>(
         minimumDelayBetweenCalls = 0,
         maxCalls = 'infinite',
         callRighAway = true,
-        debug = true,
+        debug = false,
     } = options ?? {};
     let functionName = fn.name
 

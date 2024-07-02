@@ -1,6 +1,6 @@
-
 # use-megamind
-A React hook for managing asynchronous function calls with ease, including loading state management, error handling, and customizable options for delayed or repeated calls.
+
+A simple react hook for managing asynchronous function calls with ease on the client side
 
 ## Installation
 
@@ -14,200 +14,242 @@ or
 yarn add use-megamind
 ```
 
-## Usage
+## Motivation
 
-### Example 1: Basic Usage with Immediate Call
+I wanted to make a custom solution specially/not only for data fetching but also for any kinds of async operation. Of course, React Query ( https://github.com/tanstack/query ) is awesome ( even though I haven't tried it yet ) but I wanted to make something thats easier to implement, specially on an existing project & also doesn't need a lot of documentations to follow. Something that's small but does the job.
 
-```tsx
-import React, { useEffect } from 'react';
-import useMegamind from 'use-megamind';
+## How to use
 
-const fetchData = async () => {
-  // Simulate an API call
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve("Data fetched successfully");
-    }, 2000);
-  });
-};
+### Example 1: Async function without parameters
 
-const MyComponent = () => {
-  const { data, call, isLoading, error, clear } = useMegamind(fetchData);
-
-  useEffect(() => {
-    call();
-  }, [call]);
-
-  return (
-    <div>
-      {isLoading && <p>Loading...</p>}
-      {error && <p>Error: {error.message}</p>}
-      {data && <p>Data: {data}</p>}
-      <button onClick={clear}>Clear</button>
-    </div>
-  );
-};
-
-export default MyComponent;
 ```
+"use client"
 
-### Example 2: Call with Parameters
+import useMegamind from "use-megamind"
 
-```tsx
-import React from 'react';
-import useMegamind from 'use-megamind';
-
-const fetchDataWithParams = async (id) => {
-  // Simulate an API call with parameters
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(`Data fetched for ID: ${id}`);
-    }, 2000);
-  });
-};
-
-const MyComponent = () => {
-  const { data, call, isLoading, error, clear } = useMegamind(fetchDataWithParams, { functionParams: [1] });
-
-  return (
-    <div>
-      {isLoading && <p>Loading...</p>}
-      {error && <p>Error: {error.message}</p>}
-      {data && <p>Data: {data}</p>}
-      <button onClick={() => call(2)}>Fetch Data for ID 2</button>
-      <button onClick={clear}>Clear</button>
-    </div>
-  );
-};
-
-export default MyComponent;
-```
-
-### Example 3: Delayed Call
-
-```tsx
-import React from 'react';
-import useMegamind from 'use-megamind';
-
-const fetchData = async () => {
-  // Simulate an API call
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve("Data fetched successfully");
-    }, 2000);
-  });
-};
-
-const MyComponent = () => {
-  const { data, call, isLoading, error, clear } = useMegamind(fetchData, { options: { callRighAway: false } });
-
-  return (
-    <div>
-      {isLoading && <p>Loading...</p>}
-      {error && <p>Error: {error.message}</p>}
-      {data && <p>Data: {data}</p>}
-      <button onClick={call}>Fetch Data</button>
-      <button onClick={clear}>Clear</button>
-    </div>
-  );
-};
-
-export default MyComponent;
-```
-
-### Example 4: Using Event Callbacks
-
-```tsx
-import React from 'react';
-import useMegamind from 'use-megamind';
-
-const fetchData = async () => {
-  // Simulate an API call
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve("Data fetched successfully");
-    }, 2000);
-  });
-};
-
-const MyComponent = () => {
-  const { data, call, isLoading, error, clear } = useMegamind(fetchData, {
-    events: {
-      onLoadingStart: () => console.log("Loading started"),
-      onLoadingFinished: () => console.log("Loading finished"),
-      onSuccess: (data) => console.log("Success:", data),
-      onError: (error) => console.log("Error:", error),
+function testAsyncFunction1() {
+  return new Promise((res, rej) => {
+    try {
+      setTimeout(() => {
+        res("Hello world")
+      }, 1000);
     }
-  });
+    catch (e) {
+      rej(e)
+    }
+  })
+}
 
-  return (
-    <div>
-      {isLoading && <p>Loading...</p>}
-      {error && <p>Error: {error.message}</p>}
-      {data && <p>Data: {data}</p>}
-      <button onClick={call}>Fetch Data</button>
-      <button onClick={clear}>Clear</button>
-    </div>
-  );
-};
+export default function Home() {
+  const { data, error, isLoading, call, clear } = useMegamind(testAsyncFunction1)
 
-export default MyComponent;
+  return <div className="flex flex-col gap-y-10">
+    <p>{JSON.stringify(data)}</p>
+  </div>
+}
+
 ```
 
-### Example 5: Comprehensive Configuration
+### Example 2: Async function with parameter(s)
 
-```tsx
-import React from 'react';
-import useMegamind from 'use-megamind';
+> functionParams: The async function parameters, one by one ( Default: null ) 
 
-const fetchDataWithParams = async (id) => {
-  // Simulate an API call with parameters
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(`Data fetched for ID: ${id}`);
-    }, 2000);
-  });
-};
+Yes, You will get intellisense like this
+![Screenshot (132)](https://github.com/p32929/use-megamind/assets/6418354/d7d10894-4be9-41fb-a2c8-0902289783c2)
 
-const MyComponent = () => {
-  const { data, call, isLoading, error, clear } = useMegamind(fetchDataWithParams, {
-    functionParams: [1],
+
+```
+"use client"
+
+import useMegamind from "use-megamind"
+
+function testAsyncFunction1(ms: number) {
+  return new Promise((res, rej) => {
+    try {
+      setTimeout(() => {
+        res("Hello world")
+      }, ms);
+    }
+    catch (e) {
+      rej(e)
+    }
+  })
+}
+
+export default function Home() {
+  const { data, error, isLoading, call, clear } = useMegamind(testAsyncFunction1, {
+    functionParams: [1000]
+  })
+
+  return <div className="flex flex-col gap-y-10">
+    <p>{JSON.stringify(data)}</p>
+  </div>
+}
+
+```
+
+### Example 3: Async function call on a button click
+
+> callRighAway: Whether the async function should be called on component mount ( Default: true )
+
+```
+"use client"
+
+import useMegamind from "use-megamind"
+
+function testAsyncFunction1(ms: number) {
+  return new Promise((res, rej) => {
+    try {
+      setTimeout(() => {
+        res("Hello world")
+      }, ms);
+    }
+    catch (e) {
+      rej(e)
+    }
+  })
+}
+
+export default function Home() {
+  const { data, error, isLoading, call, clear } = useMegamind(testAsyncFunction1, {
     options: {
-      minimumDelayBetweenCalls: 1000,
-      maxCalls: 5,
       callRighAway: false,
-      debug: true
+    }
+  })
+
+  return <div className="flex flex-col gap-y-10">
+    <p>{JSON.stringify(data)}</p>
+    <button onClick={() => {
+      call(1000)
+    }}>
+      Call
+    </button>
+  </div>
+}
+
+```
+
+> Yes, passing `functionParams` is optional, unless you want to call the function on component mount
+
+### Example 4: Adding options
+
+> maxCalls: Maximum how many times the async function can be called ( Default: 'infinite' )
+
+> minimumDelayBetweenCalls: Minimum delay between two calls for the async function ( Default: 0 ms )
+
+> debug: Show/hide logs ( Default: false )
+
+> callRighAway: Whether the async function should be called on component mount ( Default: true )
+
+```
+"use client"
+
+import useMegamind from "use-megamind"
+
+function testAsyncFunction1(ms: number) {
+  return new Promise((res, rej) => {
+    try {
+      setTimeout(() => {
+        res("Hello world")
+      }, ms);
+    }
+    catch (e) {
+      rej(e)
+    }
+  })
+}
+
+export default function Home() {
+  const { data, error, isLoading, call, clear } = useMegamind(testAsyncFunction1, {
+    options: {
+      callRighAway: false,
+      debug: false,
+      maxCalls: 1,
+      minimumDelayBetweenCalls: 1000 // ms
+    }
+  })
+
+  return <div className="flex flex-col gap-y-10">
+    <p>{JSON.stringify(data)}</p>
+    <button onClick={() => {
+      call(1000)
+    }}>
+      Call
+    </button>
+  </div>
+}
+
+```
+
+### Example 5: Listening to the async function events
+
+```
+"use client"
+
+import useMegamind from "use-megamind"
+
+function testAsyncFunction1(ms: number) {
+  return new Promise((res, rej) => {
+    try {
+      setTimeout(() => {
+        res("Hello world")
+      }, ms);
+    }
+    catch (e) {
+      rej(e)
+    }
+  })
+}
+
+export default function Home() {
+  const { data, error, isLoading, call, clear } = useMegamind(testAsyncFunction1, {
+    options: {
+      callRighAway: false,
+      debug: false,
+      maxCalls: 1,
+      minimumDelayBetweenCalls: 1000 // ms
     },
     events: {
-      onLoadingStart: () => console.log("Loading started"),
-      onLoadingFinished: () => console.log("Loading finished"),
-      onSuccess: (data) => console.log("Success:", data),
-      onError: (error) => console.log("Error:", error),
+      onError(error) {
+          // set your states here if needed
+      },
+      onLoadingChange(isLoading) {
+          // set your states here if needed
+      },
+      onLoadingFinished() {
+          // set your states here if needed
+      },
+      onLoadingStart() {
+          // set your states here if needed
+      },
+      onSuccess(data) {
+          // set your states here if needed
+      },
     }
-  });
+  })
 
-  return (
-    <div>
-      {isLoading && <p>Loading...</p>}
-      {error && <p>Error: {error.message}</p>}
-      {data && <p>Data: {data}</p>}
-      <button onClick={() => call(2)}>Fetch Data for ID 2</button>
-      <button onClick={clear}>Clear</button>
-    </div>
-  );
-};
+  return <div className="flex flex-col gap-y-10">
+    <p>{JSON.stringify(data)}</p>
+    <button onClick={() => {
+      call(1000)
+    }}>
+      Call
+    </button>
+  </div>
+}
 
-export default MyComponent;
 ```
 
-## Changelogs
-### 0.0.1
-Initial release
+**& Finaly**, If you're using TypeScipt, if you define the return types in the async function, you will get better intellisense like this:
+
+![Screenshot (133)](https://github.com/p32929/use-megamind/assets/6418354/c81e1a7e-2ccf-4e97-972d-81aac1a382e2)
 
 ## License
 
 ```
 MIT License
+
+Copyright (c) 2024 Fayaz Bin Salam
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -228,7 +270,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-
 ## Disclaimer
 
-This README was generated by ChatGPT. I'll update the readme later. For now, I hope it will be helpful enough for anybody to use. 
+This README was generated by ChatGPT. I'll update the readme later. For now, I hope it will be helpful enough for anybody to use.
