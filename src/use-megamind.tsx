@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useId } from 'react';
+import { useState, useEffect, useId, useRef } from 'react';
 
 /**
  * Options for the useMegamind hook.
@@ -11,7 +11,7 @@ export interface MegamindOptions<T> {
     /** Maximum number of calls allowed. */
     maxCalls?: number | 'infinite';
     /** Whether to call the function immediately upon mounting. */
-    callRighAway?: boolean;
+    callRightAway?: boolean;
     /** Whether to enable debug logging. */
     debug?: boolean;
 }
@@ -37,7 +37,6 @@ export interface MegamindEventCallbacks<T> {
     onLoadingChange?: (isLoading: boolean) => void;
 }
 
-let counter = 0;
 let lastUniqueId = "";
 
 /**
@@ -63,6 +62,8 @@ const useMegamind = <T extends (...args: any[]) => Promise<any>>(
     const [data, setDataState] = useState<UnwrapPromise<ReturnType<T>> | null>(null);
     const [error, setErrorState] = useState<any>(null);
     const [isLoading, setLoadingState] = useState(false);
+    const cache = useRef<UnwrapPromise<ReturnType<T>> | null>(null);
+    const functionCallCounter = useRef(0);
 
     const {
         functionParams = null,
@@ -73,7 +74,7 @@ const useMegamind = <T extends (...args: any[]) => Promise<any>>(
     const {
         minimumDelayBetweenCalls = 0,
         maxCalls = 'infinite',
-        callRighAway = true,
+        callRightAway = true,
         debug = false,
     } = options ?? {};
     let functionName = fn.name
@@ -96,17 +97,17 @@ const useMegamind = <T extends (...args: any[]) => Promise<any>>(
      */
     const fetchData = async (params: Parameters<T> | null) => {
         log('log', `${functionName} :: useMegamind :: fetchData :: `);
+
+        if (maxCalls === 1 && cache.current) {
+            log('log', `${functionName} :: useMegamind :: fetchData :: returning cached result`);
+            setDataState(cache.current);
+            events?.onSuccess?.(cache.current);
+            return;
+        }
+
         if (lastUniqueId === uniqueId) {
             log('warn', `${functionName} :: useMegamind :: fetchData :: last call isn't finished yet`);
             return;
-        }
-        counter++;
-
-        if (maxCalls && maxCalls !== 'infinite') {
-            if (counter > maxCalls) {
-                log('warn', `${functionName} :: useMegamind :: fetchData :: max calls exceeded`);
-                return;
-            }
         }
 
         lastUniqueId = uniqueId;
@@ -116,9 +117,22 @@ const useMegamind = <T extends (...args: any[]) => Promise<any>>(
         log('log', `${functionName} :: useMegamind :: fetchData :: started calling`);
 
         try {
+            if (maxCalls !== 'infinite' && functionCallCounter.current >= (maxCalls as number)) {
+                log('warn', `${functionName} :: useMegamind :: fetchData :: max calls exceeded`);
+                setLoadingState(false);
+                events?.onLoadingFinished?.();
+                events?.onLoadingChange?.(false);
+                return;
+            }
+
             const result = params ? await fn(...params) : await fn();
             const resolvedData = await result;
             setDataState(resolvedData);
+            if (maxCalls === 1) {
+                cache.current = resolvedData; // Cache the result only when maxCalls is 1
+                log('log', `${functionName} :: useMegamind :: fetchData :: caching result because maxCalls is set to 1`);
+            }
+            functionCallCounter.current++;
             events?.onSuccess?.(resolvedData);
             log('log', `${functionName} :: useMegamind :: fetchData :: call succeeded`);
         } catch (error) {
@@ -141,7 +155,7 @@ const useMegamind = <T extends (...args: any[]) => Promise<any>>(
     useEffect(() => {
         const requiredArgs = fn.length;
 
-        if (callRighAway) {
+        if (callRightAway) {
             if (!functionParams && requiredArgs === 0) {
                 log('log', `${functionName} :: useMegamind :: useEffect :: calling right away because no params found`);
                 fetchData(null);
@@ -164,6 +178,7 @@ const useMegamind = <T extends (...args: any[]) => Promise<any>>(
 
     /**
      * Clears the state of the hook.
+     * Resets data, error, and loading states.
      */
     const clear = () => {
         log('log', `${functionName} :: useMegamind :: clear :: `);
@@ -172,12 +187,25 @@ const useMegamind = <T extends (...args: any[]) => Promise<any>>(
         setLoadingState(false);
     };
 
+    /**
+     * Resets the state of the hook including cache and call counter.
+     * Clears data, error, and loading states.
+     * Clears the cached result and resets the call counter.
+     */
+    const reset = () => {
+        log('log', `${functionName} :: useMegamind :: reset :: `);
+        clear();
+        cache.current = null; // Clear the cache
+        functionCallCounter.current = 0; // Reset the counter
+    };
+
     return {
         data,
         call,
         isLoading,
         error,
         clear,
+        reset,
     };
 };
 

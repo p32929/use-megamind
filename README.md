@@ -91,7 +91,7 @@ export default function Home() {
 
 ### Example 3: Async function call on a button click
 
-> callRighAway: Whether the async function should be called on component mount ( Default: true )
+> callRightAway: Whether the async function should be called on component mount ( Default: true )
 
 ```
 "use client"
@@ -114,7 +114,7 @@ function testAsyncFunction1(ms: number) {
 export default function Home() {
   const { data, error, isLoading, call, clear } = useMegamind(testAsyncFunction1, {
     options: {
-      callRighAway: false,
+      callRightAway: false,
     }
   })
 
@@ -134,13 +134,13 @@ export default function Home() {
 
 ### Example 4: Adding options
 
-> maxCalls: Maximum how many times the async function can be called ( Default: 'infinite' )
+> maxCalls: Maximum how many times the async function can be called ( Default: 'infinite' ). If maxCalls is 1, it caches the response. 
 
 > minimumDelayBetweenCalls: Minimum delay between two calls for the async function ( Default: 0 ms )
 
 > debug: Show/hide logs ( Default: false )
 
-> callRighAway: Whether the async function should be called on component mount ( Default: true )
+> callRightAway: Whether the async function should be called on component mount ( Default: true )
 
 ```
 "use client"
@@ -163,7 +163,7 @@ function testAsyncFunction1(ms: number) {
 export default function Home() {
   const { data, error, isLoading, call, clear } = useMegamind(testAsyncFunction1, {
     options: {
-      callRighAway: false,
+      callRightAway: false,
       debug: false,
       maxCalls: 1,
       minimumDelayBetweenCalls: 1000 // ms
@@ -205,7 +205,7 @@ function testAsyncFunction1(ms: number) {
 export default function Home() {
   const { data, error, isLoading, call, clear } = useMegamind(testAsyncFunction1, {
     options: {
-      callRighAway: false,
+      callRightAway: false,
       debug: false,
       maxCalls: 1,
       minimumDelayBetweenCalls: 1000 // ms
@@ -240,6 +240,82 @@ export default function Home() {
 }
 
 ```
+
+### Example 6: Other things
+
+> clear: Clears the state of the hook. Resets data, error, and loading states.
+
+> reset: Resets the state of the hook including cache and call counter. Clears data, error, and loading states. Clears the cached result and resets the call counter.
+
+```
+"use client"
+
+import useMegamind from "@/lib/useMegamind";
+
+function testAsyncFunction1(ms: number): Promise<string> {
+  return new Promise((res, rej) => {
+    try {
+      setTimeout(() => {
+        res("Hello world")
+      }, ms);
+    }
+    catch (e) {
+      rej(e)
+    }
+  })
+}
+
+export default function Home() {
+  const { data, error, isLoading, call, clear, reset } = useMegamind(testAsyncFunction1, {
+    options: {
+      callRightAway: false,
+      debug: false,
+      maxCalls: 1,
+      minimumDelayBetweenCalls: 1000 // ms
+    },
+    events: {
+      onError(error) {
+        // set your states here if needed
+      },
+      onLoadingChange(isLoading) {
+        // set your states here if needed
+      },
+      onLoadingFinished() {
+        // set your states here if needed
+      },
+      onLoadingStart() {
+        // set your states here if needed
+      },
+      onSuccess(data) {
+        // set your states here if needed
+      },
+    }
+  })
+
+  return <div className="flex flex-col gap-y-10">
+    <p>{JSON.stringify(data)}</p>
+    <button onClick={() => {
+      call(1000)
+    }}>
+      Call
+    </button>
+
+    <button onClick={() => {
+      clear()
+    }}>
+      Clear
+    </button>
+
+    <button onClick={() => {
+      reset()
+    }}>
+      Reset
+    </button>
+  </div>
+}
+```
+
+if you just want to clear the states and keep the cache, use `clear()` but to clear everything including cache use `reset()`
 
 **& Finaly**, If you're using TypeScipt, if you define the return types in the async function, you will get better intellisense like this:
 
