@@ -125,6 +125,7 @@ const useMegamind = <T extends (...args: any[]) => Promise<any>>(
                 return;
             }
 
+            functionCallCounter.current++;
             const result = params ? await fn(...params) : await fn();
             const resolvedData = await result;
             setDataState(resolvedData);
@@ -132,7 +133,7 @@ const useMegamind = <T extends (...args: any[]) => Promise<any>>(
                 cache.current = resolvedData; // Cache the result only when maxCalls is 1
                 log('log', `${functionName} :: useMegamind :: fetchData :: caching result because maxCalls is set to 1`);
             }
-            functionCallCounter.current++;
+
             events?.onSuccess?.(resolvedData);
             log('log', `${functionName} :: useMegamind :: fetchData :: call succeeded`);
         } catch (error) {
