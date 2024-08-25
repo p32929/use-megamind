@@ -142,6 +142,8 @@ export default function Home() {
 
 > callRightAway: Whether the async function should be called on component mount ( Default: true )
 
+> cache: Cache response ( until the page is force reloaded )
+
 ```
 "use client"
 
