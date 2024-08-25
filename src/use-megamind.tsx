@@ -204,6 +204,10 @@ const useMegamind = <T extends (...args: any[]) => Promise<any>>(
         setDataState(null);
         setErrorState(null);
         setLoadingState(false);
+
+        // Reset the lastUniqueIdMap for the current function and params
+        const currentUniqueId = generateUniqueId(functionName, functionParams);
+        delete lastUniqueIdMap[currentUniqueId];
     };
 
     /**

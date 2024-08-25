@@ -1,6 +1,6 @@
 {
   "name": "use-megamind",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "license": "MIT",
   "description": "A React hook for managing asynchronous function calls with ease, including loading state management, error handling, and customizable options for delayed or repeated calls.",
   "main": "dist/use-megamind.js",
