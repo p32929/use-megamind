@@ -1,6 +1,6 @@
 # use-megamind
 
-A simple react hook for managing asynchronous function calls with ease on the client side
+A simple React hook for managing asynchronous function calls with ease on the client side, now with global validation, append functionality, and more.
 
 ## Installation
 
@@ -16,315 +16,266 @@ yarn add use-megamind
 
 ## Motivation
 
-I wanted to make a custom solution specially/not only for data fetching but also for any kinds of async operation. Of course, React Query ( https://github.com/tanstack/query ) is awesome ( even though I haven't tried it yet ) but I wanted to make something thats easier to implement, specially on an existing project & also doesn't need a lot of documentations to follow. Something that's small but does the job.
+The goal behind `use-megamind` was to build a custom solution for managing asynchronous operations that’s simple to implement, especially in existing projects. It works not only for data fetching but for any kind of async operation, making it a more lightweight alternative to React Query. While React Query is awesome, I wanted a solution that doesn't require extensive documentation to get started. `use-megamind` is small, efficient, and does the job without extra complexity.
 
-## How to use
+## Global Configuration
+
+You can now set global validation logic for all `useMegamind` instances via the following functions:
+
+- `setGlobalValidateOnSuccess`: Define a global function to validate the result of a successful async call.
+- `setGlobalValidateOnError`: Define a global function to validate errors during an async call.
+
+These validations will run across all hooks unless overridden locally in individual hooks.
+
+```ts
+import { setGlobalValidateOnSuccess, setGlobalValidateOnError } from "use-megamind";
+
+// Example: Set global validation for success
+setGlobalValidateOnSuccess((data) => {
+  // Return true to proceed with onSuccess, false otherwise
+  return data !== null;
+});
+
+// Example: Set global validation for error
+setGlobalValidateOnError((error) => {
+  // Return true to proceed with onError, false otherwise
+  return error !== 'IGNORE';
+});
+```
+
+## How to Use
 
 ### Example 1: Async function without parameters
 
-```
-"use client"
-
-import useMegamind from "use-megamind"
+```ts
+"use client";
+import useMegamind from "use-megamind";
 
 function testAsyncFunction1() {
   return new Promise((res, rej) => {
-    try {
-      setTimeout(() => {
-        res("Hello world")
-      }, 1000);
-    }
-    catch (e) {
-      rej(e)
-    }
-  })
+    setTimeout(() => {
+      res("Hello world");
+    }, 1000);
+  });
 }
 
 export default function Home() {
-  const { data, error, isLoading, call, clear } = useMegamind(testAsyncFunction1)
+  const { data, error, isLoading } = useMegamind(testAsyncFunction1);
 
-  return <div className="flex flex-col gap-y-10">
-    <p>{JSON.stringify(data)}</p>
-  </div>
+  return <p>{JSON.stringify(data)}</p>;
 }
-
 ```
 
-### Example 2: Async function with parameter(s)
+### Example 2: Async function with parameters
 
-> functionParams: The async function parameters, one by one ( Default: null ) 
+> `functionParams`: The async function parameters, passed one by one (Default: `null`)
 
-Yes, You will get intellisense like this
+```ts
+"use client";
+import useMegamind from "use-megamind";
 
-![Screenshot (132)](https://github.com/p32929/use-megamind/assets/6418354/d7d10894-4be9-41fb-a2c8-0902289783c2)
-
-
-```
-"use client"
-
-import useMegamind from "use-megamind"
-
-function testAsyncFunction1(ms: number) {
-  return new Promise((res, rej) => {
-    try {
-      setTimeout(() => {
-        res("Hello world")
-      }, ms);
-    }
-    catch (e) {
-      rej(e)
-    }
-  })
+function testAsyncFunction2(ms: number) {
+  return new Promise((res) => {
+    setTimeout(() => res(`Waited ${ms} ms`), ms);
+  });
 }
 
 export default function Home() {
-  const { data, error, isLoading, call, clear } = useMegamind(testAsyncFunction1, {
-    functionParams: [1000]
-  })
+  const { data, error, isLoading } = useMegamind(testAsyncFunction2, {
+    functionParams: [1000],
+  });
 
-  return <div className="flex flex-col gap-y-10">
-    <p>{JSON.stringify(data)}</p>
-  </div>
+  return <p>{JSON.stringify(data)}</p>;
 }
-
 ```
 
 ### Example 3: Async function call on a button click
 
-> callRightAway: Whether the async function should be called on component mount ( Default: true )
+> `callRightAway`: Whether the async function should be called when the component mounts (Default: `true`)
 
-```
-"use client"
+```ts
+"use client";
+import useMegamind from "use-megamind";
 
-import useMegamind from "use-megamind"
-
-function testAsyncFunction1(ms: number) {
-  return new Promise((res, rej) => {
-    try {
-      setTimeout(() => {
-        res("Hello world")
-      }, ms);
-    }
-    catch (e) {
-      rej(e)
-    }
-  })
+function testAsyncFunction3(ms: number) {
+  return new Promise((res) => {
+    setTimeout(() => res(`Hello after ${ms} ms`), ms);
+  });
 }
 
 export default function Home() {
-  const { data, error, isLoading, call, clear } = useMegamind(testAsyncFunction1, {
+  const { data, call } = useMegamind(testAsyncFunction3, {
     options: {
       callRightAway: false,
-    }
-  })
+    },
+  });
 
-  return <div className="flex flex-col gap-y-10">
-    <p>{JSON.stringify(data)}</p>
-    <button onClick={() => {
-      call(1000)
-    }}>
-      Call
-    </button>
-  </div>
+  return (
+    <>
+      <p>{JSON.stringify(data)}</p>
+      <button onClick={() => call(1000)}>Call</button>
+    </>
+  );
 }
-
 ```
-
-> Yes, passing `functionParams` is optional, unless you want to call the function on component mount
 
 ### Example 4: Adding options
 
-> maxCalls: Maximum how many times the async function can be called ( Default: 'infinite' ). If maxCalls is 1, it caches the response. 
+`useMegamind` provides a variety of options to control behavior:
 
-> minimumDelayBetweenCalls: Minimum delay between two calls for the async function ( Default: 0 ms )
+- `maxCalls`: Maximum number of times the async function can be called (Default: `'infinite'`)
+- `minimumDelayBetweenCalls`: Minimum delay between two consecutive calls (Default: `0ms`)
+- `debug`: Enable debug logging (Default: `false`)
+- `callRightAway`: Whether to call the async function when the component mounts (Default: `true`)
+- `cache`: Cache response until the page is reloaded (Default: `false`)
 
-> debug: Show/hide logs ( Default: false )
+```ts
+"use client";
+import useMegamind from "use-megamind";
 
-> callRightAway: Whether the async function should be called on component mount ( Default: true )
-
-> cache: Cache response ( until the page is force reloaded )
-
-```
-"use client"
-
-import useMegamind from "use-megamind"
-
-function testAsyncFunction1(ms: number) {
-  return new Promise((res, rej) => {
-    try {
-      setTimeout(() => {
-        res("Hello world")
-      }, ms);
-    }
-    catch (e) {
-      rej(e)
-    }
-  })
+function testAsyncFunction4(ms: number) {
+  return new Promise((res) => {
+    setTimeout(() => res(`Hello after ${ms} ms`), ms);
+  });
 }
 
 export default function Home() {
-  const { data, error, isLoading, call, clear } = useMegamind(testAsyncFunction1, {
+  const { data, call } = useMegamind(testAsyncFunction4, {
     options: {
       callRightAway: false,
-      debug: false,
+      debug: true,
       maxCalls: 1,
-      minimumDelayBetweenCalls: 1000 // ms
-    }
-  })
+      minimumDelayBetweenCalls: 1000,
+    },
+  });
 
-  return <div className="flex flex-col gap-y-10">
-    <p>{JSON.stringify(data)}</p>
-    <button onClick={() => {
-      call(1000)
-    }}>
-      Call
-    </button>
-  </div>
+  return (
+    <>
+      <p>{JSON.stringify(data)}</p>
+      <button onClick={() => call(1000)}>Call</button>
+    </>
+  );
 }
-
 ```
 
-### Example 5: Listening to the async function events
+### Example 5: Append fetched data
 
-```
-"use client"
+You can now append the fetched data to the existing state using the `callToAppend` function.
 
-import useMegamind from "use-megamind"
+```ts
+"use client";
+import useMegamind from "use-megamind";
 
-function testAsyncFunction1(ms: number) {
-  return new Promise((res, rej) => {
-    try {
-      setTimeout(() => {
-        res("Hello world")
-      }, ms);
-    }
-    catch (e) {
-      rej(e)
-    }
-  })
+function testAsyncFunction5(ms: number) {
+  return new Promise((res) => {
+    setTimeout(() => res(`Fetched after ${ms} ms`), ms);
+  });
 }
 
 export default function Home() {
-  const { data, error, isLoading, call, clear } = useMegamind(testAsyncFunction1, {
+  const { data, callToAppend } = useMegamind(testAsyncFunction5, {
     options: {
       callRightAway: false,
-      debug: false,
-      maxCalls: 1,
-      minimumDelayBetweenCalls: 1000 // ms
+    },
+  });
+
+  return (
+    <>
+      <p>{JSON.stringify(data)}</p>
+      <button onClick={() => callToAppend(1000)}>Append Data</button>
+    </>
+  );
+}
+```
+
+### Example 6: Event callbacks and validations
+
+You can now define validations for both success and error callbacks, either locally or globally.
+
+```ts
+"use client";
+import useMegamind from "use-megamind";
+
+function testAsyncFunction6(ms: number) {
+  return new Promise((res, rej) => {
+    if (ms < 500) {
+      rej("Error: Too fast!");
+    } else {
+      setTimeout(() => res(`Hello after ${ms} ms`), ms);
+    }
+  });
+}
+
+export default function Home() {
+  const { data, error, isLoading, call } = useMegamind(testAsyncFunction6, {
+    options: {
+      callRightAway: false,
     },
     events: {
-      onError(error) {
-          // set your states here if needed
-      },
-      onLoadingChange(isLoading) {
-          // set your states here if needed
-      },
-      onLoadingFinished() {
-          // set your states here if needed
-      },
-      onLoadingStart() {
-          // set your states here if needed
+      validateOnSuccess(data) {
+        // Proceed with onSuccess only if data is valid
+        return data.includes("Hello");
       },
       onSuccess(data) {
-          // set your states here if needed
+        console.log("Success: ", data);
       },
-    }
-  })
+      validateOnError(error) {
+        // Proceed with onError only if the error is valid
+        return error.includes("Error");
+      },
+      onError(error) {
+        console.error("Error: ", error);
+      },
+    },
+  });
 
-  return <div className="flex flex-col gap-y-10">
-    <p>{JSON.stringify(data)}</p>
-    <button onClick={() => {
-      call(1000)
-    }}>
-      Call
-    </button>
-  </div>
+  return (
+    <>
+      <p>{JSON.stringify(data)}</p>
+      <p>{JSON.stringify(error)}</p>
+      <button onClick={() => call(400)}>Call with Error</button>
+      <button onClick={() => call(600)}>Call with Success</button>
+    </>
+  );
 }
-
 ```
 
-### Example 6: Other things
+### Example 7: Clearing or resetting state
 
-> clear: Clears the state of the hook. Resets data, error, and loading states.
+- `clear`: Clears the state but keeps the cache.
+- `reset`: Resets everything, including the cache and call counter.
 
-> reset: Resets the state of the hook including cache and call counter. Clears data, error, and loading states. Clears the cached result and resets the call counter.
+```ts
+"use client";
+import useMegamind from "use-megamind";
 
-```
-"use client"
-
-import useMegamind from "@/lib/useMegamind";
-
-function testAsyncFunction1(ms: number): Promise<string> {
-  return new Promise((res, rej) => {
-    try {
-      setTimeout(() => {
-        res("Hello world")
-      }, ms);
-    }
-    catch (e) {
-      rej(e)
-    }
-  })
+function testAsyncFunction7(ms: number) {
+  return new Promise((res) => {
+    setTimeout(() => res(`Hello after ${ms} ms`), ms);
+  });
 }
 
 export default function Home() {
-  const { data, error, isLoading, call, clear, reset } = useMegamind(testAsyncFunction1, {
+  const { data, call, clear, reset } = useMegamind(testAsyncFunction7, {
     options: {
       callRightAway: false,
-      debug: false,
-      maxCalls: 1,
-      minimumDelayBetweenCalls: 1000 // ms
     },
-    events: {
-      onError(error) {
-        // set your states here if needed
-      },
-      onLoadingChange(isLoading) {
-        // set your states here if needed
-      },
-      onLoadingFinished() {
-        // set your states here if needed
-      },
-      onLoadingStart() {
-        // set your states here if needed
-      },
-      onSuccess(data) {
-        // set your states here if needed
-      },
-    }
-  })
+  });
 
-  return <div className="flex flex-col gap-y-10">
-    <p>{JSON.stringify(data)}</p>
-    <button onClick={() => {
-      call(1000)
-    }}>
-      Call
-    </button>
-
-    <button onClick={() => {
-      clear()
-    }}>
-      Clear
-    </button>
-
-    <button onClick={() => {
-      reset()
-    }}>
-      Reset
-    </button>
-  </div>
+  return (
+    <>
+      <p>{JSON.stringify(data)}</p>
+      <button onClick={() => call(1000)}>Call</button>
+      <button onClick={clear}>Clear</button>
+      <button onClick={reset}>Reset</button>
+    </>
+  );
 }
 ```
-
-if you just want to clear the states and keep the cache, use `clear()` but to clear everything including cache use `reset()`
-
-**& Finaly**, If you're using TypeScipt, if you define the return types in the async function, you will get better intellisense like this:
-
-![Screenshot (133)](https://github.com/p32929/use-megamind/assets/6418354/c81e1a7e-2ccf-4e97-972d-81aac1a382e2)
 
 ## Contribution
-If you want to contribute to this project like adding feature, fixing bugs etc, please open an issue before submitting any pull requests.
+
+If you'd like to contribute by adding features or fixing bugs, please open an issue before submitting a pull request.
 
 ## License
 
