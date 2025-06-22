@@ -49,7 +49,7 @@ body {
 }
 
 .App-header p {
-  margin: 0;
+  margin: 0 0 2rem 0;
   font-size: 1.2rem;
   color: #666;
 }
@@ -67,12 +67,86 @@ body {
   }
 }
 
-.test-container {
+/* Navigation Tabs */
+.section-tabs {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.tab-button {
+  background: rgba(255, 255, 255, 0.1);
+  color: #333;
+  border: 2px solid rgba(102, 126, 234, 0.3);
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.tab-button:hover {
+  background: rgba(102, 126, 234, 0.2);
+  transform: translateY(-2px);
+}
+
+.tab-button.active {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.App-main {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem 2rem;
+}
+
+/* Examples Grid Layout */
+.examples-grid {
   display: grid;
   gap: 2rem;
+}
+
+.section-intro {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin-bottom: 1rem;
+}
+
+.section-intro h2 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 2rem;
+}
+
+.section-intro p {
+  margin: 0;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.api-intro {
+  background: linear-gradient(135deg, rgba(227, 242, 253, 0.95) 0%, rgba(243, 229, 245, 0.95) 100%);
+  border: 2px solid #2196f3;
+}
+
+.server-status {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(255, 152, 0, 0.1);
+  border-radius: 8px;
+  border-left: 4px solid #ff9800;
+  font-size: 0.95rem;
 }
 
 .example-section {
@@ -208,6 +282,16 @@ body {
   .App-header h1 {
     font-size: 2rem;
   }
+
+  .section-tabs {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .tab-button {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+  }
   
   .example-section {
     padding: 1.5rem;
@@ -255,30 +339,4 @@ code {
   padding: 0.2rem 0.4rem;
   border-radius: 3px;
   font-size: 0.85em;
-}
-
-.api-section {
-  margin-top: 3rem;
-  padding: 2rem;
-  background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
-  border-radius: 12px;
-  border: 2px solid #2196f3;
-}
-
-.api-section h1 {
-  color: #1976d2;
-  text-align: center;
-  margin-bottom: 0.5rem;
-  font-size: 2rem;
-}
-
-.api-section > p {
-  text-align: center;
-  color: #424242;
-  font-style: italic;
-  margin-bottom: 2rem;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 8px;
-  border-left: 4px solid #ff9800;
 }

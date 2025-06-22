@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import BasicExample from './components/BasicExample';
 import ParameterExample from './components/ParameterExample';
@@ -13,32 +13,64 @@ import ApiUsersExample from './components/ApiUsersExample';
 import ApiErrorExample from './components/ApiErrorExample';
 
 function App() {
+  const [activeSection, setActiveSection] = useState<'basic' | 'api'>('basic');
+
   return (
     <div className="App">
       <header className="App-header">
         <h1>🧠 use-megamind Hook Testing</h1>
         <p>Comprehensive testing suite for the use-megamind React hook</p>
+        
+        <div className="section-tabs">
+          <button 
+            className={`tab-button ${activeSection === 'basic' ? 'active' : ''}`}
+            onClick={() => setActiveSection('basic')}
+          >
+            📝 Basic Examples (8)
+          </button>
+          <button 
+            className={`tab-button ${activeSection === 'api' ? 'active' : ''}`}
+            onClick={() => setActiveSection('api')}
+          >
+            🌐 API Examples (3)
+          </button>
+        </div>
       </header>
       
       <main className="App-main">
-        {/* Basic Examples */}
-        <BasicExample />
-        <ParameterExample />
-        <ButtonClickExample />
-        <OptionsExample />
-        <AppendExample />
-        <CallbacksExample />
-        <ClearResetExample />
-        <GlobalValidationExample />
+        {activeSection === 'basic' && (
+          <div className="examples-grid">
+            <div className="section-intro">
+              <h2>📝 Basic Examples</h2>
+              <p>Test core functionality with simple async functions. No server required.</p>
+            </div>
+            
+            <BasicExample />
+            <ParameterExample />
+            <ButtonClickExample />
+            <OptionsExample />
+            <AppendExample />
+            <CallbacksExample />
+            <ClearResetExample />
+            <GlobalValidationExample />
+          </div>
+        )}
         
-        {/* API Examples */}
-        <div className="api-section">
-          <h1>🌐 API Testing Section</h1>
-          <p>Testing with real API endpoints (requires test server running on port 3001)</p>
-          <ApiBasicExample />
-          <ApiUsersExample />
-          <ApiErrorExample />
-        </div>
+        {activeSection === 'api' && (
+          <div className="examples-grid">
+            <div className="section-intro api-intro">
+              <h2>🌐 API Examples</h2>
+              <p>Test with real HTTP requests. Requires test server running on port 3001.</p>
+              <div className="server-status">
+                <strong>Setup:</strong> Run <code>yarn setup</code> then <code>yarn test</code>
+              </div>
+            </div>
+            
+            <ApiBasicExample />
+            <ApiUsersExample />
+            <ApiErrorExample />
+          </div>
+        )}
       </main>
     </div>
   );
