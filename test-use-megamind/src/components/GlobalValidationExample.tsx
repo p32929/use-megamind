@@ -1,151 +1,197 @@
 import React, { useState, useEffect } from 'react';
 import useMegamind, { setGlobalValidateOnSuccess, setGlobalValidateOnError } from 'use-megamind';
+import CodeModal from './CodeModal';
 
-function testAsyncFunction8(shouldSucceed: boolean) {
+function testValidationFunction(shouldSucceed: boolean, value: string) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (shouldSucceed) {
-        resolve("VALID_SUCCESS");
+        resolve(value);
       } else {
-        reject("VALID_ERROR");
+        reject(value);
       }
-    }, 800);
-  });
-}
-
-function testAsyncFunction9(shouldSucceed: boolean) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (shouldSucceed) {
-        resolve("INVALID_SUCCESS");
-      } else {
-        reject("INVALID_ERROR");
-      }
-    }, 800);
+    }, 500);
   });
 }
 
 const GlobalValidationExample: React.FC = () => {
-  const [globalValidationEnabled, setGlobalValidationEnabled] = useState(false);
-  const [successLogs, setSuccessLogs] = useState<string[]>([]);
-  const [errorLogs, setErrorLogs] = useState<string[]>([]);
+  const [showCodeModal, setShowCodeModal] = useState(false);
+  const [logs, setLogs] = useState<string[]>([]);
+  const [globalValidation, setGlobalValidation] = useState(true);
+
+  const addLog = (message: string) => {
+    setLogs(prev => [...prev, `${new Date().toLocaleTimeString()}: ${message}`]);
+  };
 
   useEffect(() => {
-    if (globalValidationEnabled) {
+    if (globalValidation) {
+      // Set global validations
       setGlobalValidateOnSuccess((data) => {
-        const isValid = data?.includes("VALID");
-        setSuccessLogs(prev => [...prev.slice(-2), `Global success validation: ${data} -> ${isValid ? 'PROCEED' : 'BLOCK'}`]);
-        return isValid;
+        addLog(`Global success validation: ${data} - ${data !== 'INVALID'}`);
+        return data !== 'INVALID';
       });
-
+      
       setGlobalValidateOnError((error) => {
-        const isValid = error?.includes("VALID");
-        setErrorLogs(prev => [...prev.slice(-2), `Global error validation: ${error} -> ${isValid ? 'PROCEED' : 'BLOCK'}`]);
-        return isValid;
+        addLog(`Global error validation: ${error} - ${error !== 'IGNORE'}`);
+        return error !== 'IGNORE';
       });
     } else {
+      // Clear global validations
       setGlobalValidateOnSuccess(() => true);
       setGlobalValidateOnError(() => true);
     }
-  }, [globalValidationEnabled]);
+  }, [globalValidation]);
 
-  const { data: data1, error: error1, isLoading: isLoading1, call: call1 } = useMegamind(testAsyncFunction8, {
-    options: { callRightAway: false },
+  const { data, error, isLoading, call } = useMegamind(testValidationFunction, {
+    options: {
+      callRightAway: false,
+    },
     events: {
-      onSuccess: (data) => setSuccessLogs(prev => [...prev.slice(-2), `Hook 1 success: ${data}`]),
-      onError: (error) => setErrorLogs(prev => [...prev.slice(-2), `Hook 1 error: ${error}`]),
+      onSuccess: (data) => addLog(`Local success callback triggered: ${data}`),
+      onError: (error) => addLog(`Local error callback triggered: ${error}`),
     },
   });
 
-  const { data: data2, error: error2, isLoading: isLoading2, call: call2 } = useMegamind(testAsyncFunction9, {
-    options: { callRightAway: false },
-    events: {
-      onSuccess: (data) => setSuccessLogs(prev => [...prev.slice(-2), `Hook 2 success: ${data}`]),
-      onError: (error) => setErrorLogs(prev => [...prev.slice(-2), `Hook 2 error: ${error}`]),
-    },
+  const codeExample = `// 1. Set up global validation functions
+import { setGlobalValidateOnSuccess, setGlobalValidateOnError } from 'use-megamind';
+
+// Global validation for success
+setGlobalValidateOnSuccess((data) => {
+  console.log('Global success validation:', data);
+  return data !== 'INVALID'; // Don't trigger onSuccess if data is 'INVALID'
+});
+
+// Global validation for error
+setGlobalValidateOnError((error) => {
+  console.log('Global error validation:', error);
+  return error !== 'IGNORE'; // Don't trigger onError if error is 'IGNORE'
+});
+
+// 2. Define your async function
+function testValidationFunction(shouldSucceed: boolean, value: string) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (shouldSucceed) {
+        resolve(value);
+      } else {
+        reject(value);
+      }
+    }, 500);
   });
+}
+
+// 3. Use hook with local event callbacks
+const { data, error, isLoading, call } = useMegamind(testValidationFunction, {
+  options: { callRightAway: false },
+  events: {
+    onSuccess: (data) => console.log('Local success:', data),
+    onError: (error) => console.log('Local error:', error),
+  },
+});
+
+// 4. Test different scenarios
+<button onClick={() => call(true, 'VALID')}>Success (Valid)</button>
+<button onClick={() => call(true, 'INVALID')}>Success (Invalid)</button>
+<button onClick={() => call(false, 'ERROR')}>Error (Normal)</button>
+<button onClick={() => call(false, 'IGNORE')}>Error (Ignore)</button>`;
 
   return (
-    <div className="example-section">
-      <h2>🌐 Example 8: Global Validation</h2>
-      <p>Tests global validation functions that apply to all useMegamind instances.</p>
-      
-      <div className="controls">
-        <label className="checkbox-label">
-          <input 
-            type="checkbox" 
-            checked={globalValidationEnabled}
-            onChange={(e) => setGlobalValidationEnabled(e.target.checked)}
-          />
-          Enable Global Validation (only allows "VALID" in data/error)
-        </label>
-      </div>
-
-      <div className="controls">
-        <h4>Hook 1 (Returns VALID data/error):</h4>
-        <button 
-          onClick={() => call1(true)} 
-          disabled={isLoading1}
-          className="test-button"
-        >
-          Call Success (VALID)
-        </button>
-        <button 
-          onClick={() => call1(false)} 
-          disabled={isLoading1}
-          className="test-button"
-        >
-          Call Error (VALID)
-        </button>
-      </div>
-
-      <div className="controls">
-        <h4>Hook 2 (Returns INVALID data/error):</h4>
-        <button 
-          onClick={() => call2(true)} 
-          disabled={isLoading2}
-          className="test-button"
-        >
-          Call Success (INVALID)
-        </button>
-        <button 
-          onClick={() => call2(false)} 
-          disabled={isLoading2}
-          className="test-button"
-        >
-          Call Error (INVALID)
-        </button>
-      </div>
-      
-      <div className="result-box">
-        <div>
-          <strong>Hook 1 - Loading:</strong> {isLoading1 ? 'Yes' : 'No'}, 
-          <strong> Data:</strong> {JSON.stringify(data1)}, 
-          <strong> Error:</strong> {JSON.stringify(error1)}
+    <>
+      <div className="example-section">
+        <h2>🌍 Global Validation</h2>
+        <p>Tests global validation functions that control when local callbacks are triggered.</p>
+        
+        <div className="example-controls">
+          <button 
+            onClick={() => setShowCodeModal(true)}
+            className="code-toggle-button"
+          >
+            📝 View Code
+          </button>
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={globalValidation}
+              onChange={(e) => setGlobalValidation(e.target.checked)}
+            />
+            Enable Global Validation
+          </label>
         </div>
-        <div>
-          <strong>Hook 2 - Loading:</strong> {isLoading2 ? 'Yes' : 'No'}, 
-          <strong> Data:</strong> {JSON.stringify(data2)}, 
-          <strong> Error:</strong> {JSON.stringify(error2)}
+
+        <div className="example-controls">
+          <h4>🧪 Test Scenarios:</h4>
+          <button 
+            onClick={() => call(true, 'VALID')} 
+            disabled={isLoading}
+            className="test-button"
+          >
+            Success (Valid)
+          </button>
+          <button 
+            onClick={() => call(true, 'INVALID')} 
+            disabled={isLoading}
+            className="test-button"
+          >
+            Success (Invalid)
+          </button>
+          <button 
+            onClick={() => call(false, 'ERROR')} 
+            disabled={isLoading}
+            className="test-button"
+          >
+            Error (Normal)
+          </button>
+          <button 
+            onClick={() => call(false, 'IGNORE')} 
+            disabled={isLoading}
+            className="test-button"
+          >
+            Error (Ignore)
+          </button>
+          <button 
+            onClick={() => setLogs([])}
+            className="test-button"
+          >
+            Clear Logs
+          </button>
         </div>
-        <div>
-          <strong>Success Logs:</strong>
-          <div className="logs">
-            {successLogs.map((log, index) => (
-              <div key={index} className="log-entry">{log}</div>
-            ))}
+        
+        <div className="result-box">
+          <div className={isLoading ? 'loading-indicator' : ''}>
+            <strong>Loading:</strong> {isLoading ? 'Yes' : 'No'}
+          </div>
+          <div>
+            <strong>Data:</strong> {JSON.stringify(data)}
+          </div>
+          <div>
+            <strong>Error:</strong> {JSON.stringify(error)}
+          </div>
+          <div>
+            <strong>Global Validation:</strong> {globalValidation ? 'Enabled' : 'Disabled'}
           </div>
         </div>
-        <div>
-          <strong>Error Logs:</strong>
-          <div className="logs">
-            {errorLogs.map((log, index) => (
-              <div key={index} className="log-entry">{log}</div>
-            ))}
+
+        <div className="logs-section">
+          <h4>📋 Validation Logs:</h4>
+          <div className="logs-container">
+            {logs.length === 0 ? (
+              <p><em>No validation events logged yet. Try the test scenarios!</em></p>
+            ) : (
+              logs.map((log, index) => (
+                <div key={index} className="log-entry">{log}</div>
+              ))
+            )}
           </div>
         </div>
       </div>
-    </div>
+
+      <CodeModal
+        isOpen={showCodeModal}
+        onClose={() => setShowCodeModal(false)}
+        title="Global Validation Implementation"
+        code={codeExample}
+      />
+    </>
   );
 };
 
