@@ -1,0 +1,284 @@
+/* Reset and base styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+.App {
+  min-height: 100vh;
+  color: #333;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.App-header h1 {
+  margin: 0 0 1rem 0;
+  font-size: 2.5rem;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.App-header p {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.test-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem 2rem;
+  display: grid;
+  gap: 2rem;
+}
+
+.example-section {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.example-section h2 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1.5rem;
+  border-bottom: 2px solid #667eea;
+  padding-bottom: 0.5rem;
+}
+
+.example-section p {
+  margin: 0 0 1.5rem 0;
+  color: #666;
+  line-height: 1.6;
+}
+
+.controls {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.controls h4 {
+  width: 100%;
+  margin: 1rem 0 0.5rem 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.controls h4:first-child {
+  margin-top: 0;
+}
+
+.test-button {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.test-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.test-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #667eea;
+}
+
+.result-box {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1.5rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.result-box > div {
+  margin-bottom: 1rem;
+}
+
+.result-box > div:last-child {
+  margin-bottom: 0;
+}
+
+.result-box strong {
+  color: #333;
+  font-weight: 600;
+}
+
+.logs {
+  background: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-top: 0.5rem;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.log-entry {
+  padding: 0.25rem 0;
+  border-bottom: 1px solid #f1f3f5;
+  font-size: 0.8rem;
+  color: #495057;
+}
+
+.log-entry:last-child {
+  border-bottom: none;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .App-header {
+    padding: 1.5rem;
+  }
+  
+  .App-header h1 {
+    font-size: 2rem;
+  }
+  
+  .example-section {
+    padding: 1.5rem;
+  }
+  
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .test-button {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Loading animation - ONLY for loading states */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.loading-indicator {
+  animation: pulse 1s infinite;
+}
+
+/* Code formatting */
+pre {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: 0.8rem;
+}
+
+code {
+  background: #f8f9fa;
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  font-size: 0.85em;
+}
+
+.api-section {
+  margin-top: 3rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+  border-radius: 12px;
+  border: 2px solid #2196f3;
+}
+
+.api-section h1 {
+  color: #1976d2;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
+}
+
+.api-section > p {
+  text-align: center;
+  color: #424242;
+  font-style: italic;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  border-left: 4px solid #ff9800;
+}

@@ -18,13 +18,16 @@
   "devDependencies": {
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "typescript": "^5.5.3"
+    "typescript": "^5.5.3",
+    "concurrently": "^8.2.2"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "setup": "echo \"📦 Installing dependencies...\" && cd test-server && yarn install && cd ../test-use-megamind && yarn install && echo \"✅ Setup complete!\"",
+    "test": "concurrently --kill-others --prefix \"[{name}]\" --names \"SERVER,CLIENT\" --prefix-colors \"yellow,cyan\" \"cd test-server && yarn start\" \"cd test-use-megamind && yarn start\""
   },
   "files": [
     "dist"
