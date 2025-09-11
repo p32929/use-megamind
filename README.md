@@ -273,6 +273,45 @@ export default function Home() {
 }
 ```
 
+## Development
+
+### Running Examples
+
+1. **Setup all dependencies:**
+   ```bash
+   npm run setup
+   ```
+
+2. **Run examples with live server:**
+   ```bash
+   npm run examples
+   ```
+   This starts both the Express server (port 3001) and React app (port 3000) concurrently.
+
+3. **Individual development:**
+   ```bash
+   # Server only
+   cd examples/server && npm start
+   
+   # React app only
+   cd examples/react-app && npm start
+   ```
+
+### Project Structure
+```
+├── src/use-megamind.tsx       # Main hook implementation
+├── examples/
+│   ├── server/                # Express test server
+│   └── react-app/            # React example application
+├── dist/                     # Built library files
+└── package.json              # Library configuration
+```
+
+### Building the Library
+```bash
+npm run build
+```
+
 ## Contribution
 
 If you'd like to contribute by adding features or fixing bugs, please open an issue before submitting a pull request.
