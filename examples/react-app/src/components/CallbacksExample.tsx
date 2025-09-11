@@ -29,9 +29,9 @@ const CallbacksExample: React.FC = () => {
     events: {
       onLoadingStart: () => addLog('Loading started'),
       onLoadingFinished: () => addLog('Loading finished'),
-      onSuccess: (data) => addLog(`Success callback: ${data}`),
-      onError: (error) => addLog(`Error callback: ${error.message}`),
-      onLoadingChange: (isLoading) => addLog(`Loading changed: ${isLoading}`),
+      onSuccess: (data: any) => addLog(`Success callback: ${data}`),
+      onError: (error: any) => addLog(`Error callback: ${error.message}`),
+      onLoadingChange: (isLoading: boolean) => addLog(`Loading changed: ${isLoading}`),
     },
   });
 

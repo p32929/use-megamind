@@ -23,7 +23,7 @@ function testAsyncFunction1() {
   });
 }
 
-// 2. Use the hook (calls automatically on mount)
+// 2. Use the hook (calls automatically on mount)  
 const { data, error, isLoading } = useMegamind(testAsyncFunction1);
 
 // 3. Use the states in your component
@@ -33,7 +33,7 @@ return (
     {data && <p>Result: {data}</p>}
     {error && <p>Error: {error.message}</p>}
   </div>
-);`;
+);`.trim();
 
   return (
     <>

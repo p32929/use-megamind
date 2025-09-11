@@ -26,12 +26,12 @@ const GlobalValidationExample: React.FC = () => {
   useEffect(() => {
     if (globalValidation) {
       // Set global validations
-      setGlobalValidateOnSuccess((data) => {
+      setGlobalValidateOnSuccess((data: any) => {
         addLog(`Global success validation: ${data} - ${data !== 'INVALID'}`);
         return data !== 'INVALID';
       });
       
-      setGlobalValidateOnError((error) => {
+      setGlobalValidateOnError((error: any) => {
         addLog(`Global error validation: ${error} - ${error !== 'IGNORE'}`);
         return error !== 'IGNORE';
       });
@@ -47,8 +47,8 @@ const GlobalValidationExample: React.FC = () => {
       callRightAway: false,
     },
     events: {
-      onSuccess: (data) => addLog(`Local success callback triggered: ${data}`),
-      onError: (error) => addLog(`Local error callback triggered: ${error}`),
+      onSuccess: (data: any) => addLog(`Local success callback triggered: ${data}`),
+      onError: (error: any) => addLog(`Local error callback triggered: ${error}`),
     },
   });
 

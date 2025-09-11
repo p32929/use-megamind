@@ -26,8 +26,16 @@
   },
   "scripts": {
     "build": "tsc",
-    "setup": "echo \"📦 Installing dependencies...\" && cd examples/server && yarn install && cd ../react-app && yarn install && echo \"✅ Setup complete!\"",
-    "examples": "concurrently --kill-others --prefix \"[{name}]\" --names \"SERVER,CLIENT\" --prefix-colors \"yellow,cyan\" \"cd examples/server && yarn start\" \"cd examples/react-app && yarn start\""
+    "build:watch": "tsc --watch",
+    "setup": "echo \"📦 Installing dependencies...\" && yarn install && cd examples/server && yarn install && cd ../react-app && yarn install && echo \"✅ Setup complete!\"",
+    "examples": "kill-port 15001 15002; concurrently --kill-others --prefix \"[{name}]\" --names \"SERVER,CLIENT\" --prefix-colors \"yellow,cyan\" \"cd examples/server && yarn start\" \"cd examples/react-app && yarn start\"",
+    "dev": "yarn build && yarn examples",
+    "start": "yarn dev",
+    "test": "yarn examples",
+    "clean": "rm -rf dist && rm -rf examples/server/node_modules && rm -rf examples/react-app/node_modules && rm -rf node_modules",
+    "reset": "yarn clean && yarn setup",
+    "server": "kill-port 15001; cd examples/server && yarn start",
+    "client": "kill-port 15002; cd examples/react-app && yarn start"
   },
   "files": [
     "dist"

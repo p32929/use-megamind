@@ -3,7 +3,7 @@ import axios from 'axios';
 import useMegamind from 'use-megamind';
 import CodeModal from './CodeModal';
 
-const API_BASE = 'http://localhost:3001';
+const API_BASE = 'http://localhost:15001';
 
 // API functions
 const fetchUsers = async (role?: string) => {
@@ -202,7 +202,7 @@ const {
           <p><strong>📋 Requirements:</strong></p>
           <ul>
             <li>Start the test server: <code>node server.js</code></li>
-            <li>Server should be running on http://localhost:3001</li>
+            <li>Server should be running on http://localhost:15001</li>
             <li>Endpoints: GET /api/users, POST /api/users</li>
           </ul>
         </div>

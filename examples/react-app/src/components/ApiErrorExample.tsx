@@ -3,44 +3,43 @@ import axios from 'axios';
 import useMegamind from 'use-megamind';
 import CodeModal from './CodeModal';
 
-const API_BASE = 'http://localhost:3001';
+const API_BASE = 'http://localhost:15001';
 
 // API functions for different error scenarios
-const triggerError = async (errorType: string) => {
-  const response = await axios.get(`${API_BASE}/api/error/${errorType}`);
+const triggerRandomError = async () => {
+  const response = await axios.get(`${API_BASE}/api/random-error`);
   return response.data;
 };
 
 const triggerTimeout = async (seconds: number) => {
-  const response = await axios.get(`${API_BASE}/api/timeout/${seconds}`, {
+  const response = await axios.get(`${API_BASE}/api/delayed/${seconds * 1000}`, {
     timeout: 2000 // 2 second timeout
   });
   return response.data;
 };
 
-const triggerServerError = async () => {
-  const response = await axios.get(`${API_BASE}/api/server-error`);
+const triggerNotFoundError = async () => {
+  const response = await axios.get(`${API_BASE}/api/nonexistent-endpoint`);
   return response.data;
 };
 
 const ApiErrorExample: React.FC = () => {
   const [showCodeModal, setShowCodeModal] = useState(false);
-  const [errorType, setErrorType] = useState<string>('404');
   const [timeoutSeconds, setTimeoutSeconds] = useState<number>(3);
 
-  // Hook for testing different error types
+  // Hook for testing random errors
   const { 
-    data: errorData, 
-    error: errorError, 
-    isLoading: errorLoading, 
-    call: triggerErrorCall 
-  } = useMegamind(triggerError, {
+    data: randomErrorData, 
+    error: randomError, 
+    isLoading: randomErrorLoading, 
+    call: triggerRandomErrorCall 
+  } = useMegamind(triggerRandomError, {
     options: { 
       callRightAway: false
     },
     events: {
-      onError: (error) => {
-        console.log('Error caught by hook:', error);
+      onError: (error: any) => {
+        console.log('Random error caught by hook:', error);
       }
     }
   });
@@ -56,49 +55,49 @@ const ApiErrorExample: React.FC = () => {
       callRightAway: false
     },
     events: {
-      onError: (error) => {
+      onError: (error: any) => {
         console.log('Timeout error caught:', error);
       }
     }
   });
 
-  // Hook for testing server errors
+  // Hook for testing not found errors
   const { 
-    data: serverData, 
-    error: serverError, 
-    isLoading: serverLoading, 
-    call: triggerServerCall 
-  } = useMegamind(triggerServerError, {
+    data: notFoundData, 
+    error: notFoundError, 
+    isLoading: notFoundLoading, 
+    call: triggerNotFoundCall 
+  } = useMegamind(triggerNotFoundError, {
     options: { 
       callRightAway: false
     },
     events: {
-      onError: (error) => {
-        console.log('Server error caught:', error);
+      onError: (error: any) => {
+        console.log('404 error caught:', error);
       }
     }
   });
 
   const codeExample = `// 1. Define API functions for different error scenarios
-const triggerError = async (errorType: string) => {
-  const response = await axios.get(\`/api/error/\${errorType}\`);
+const triggerRandomError = async () => {
+  const response = await axios.get('/api/random-error');
   return response.data;
 };
 
 const triggerTimeout = async (seconds: number) => {
-  const response = await axios.get(\`/api/timeout/\${seconds}\`, {
+  const response = await axios.get(\`/api/delayed/\${seconds * 1000}\`, {
     timeout: 2000 // 2 second timeout
   });
   return response.data;
 };
 
-const triggerServerError = async () => {
-  const response = await axios.get('/api/server-error');
+const triggerNotFoundError = async () => {
+  const response = await axios.get('/api/nonexistent-endpoint');
   return response.data;
 };
 
 // 2. Use hooks with error handling
-const { data, error, isLoading, call } = useMegamind(triggerError, {
+const { data, error, isLoading, call } = useMegamind(triggerRandomError, {
   options: { callRightAway: false },
   events: {
     onError: (error) => {
@@ -114,9 +113,9 @@ const { data, error, isLoading, call } = useMegamind(triggerError, {
 });
 
 // 3. Test different error scenarios
-<button onClick={() => call('404')}>Test 404 Error</button>
-<button onClick={() => call('500')}>Test 500 Error</button>
-<button onClick={() => timeoutCall(5)}>Test Timeout</button>`;
+<button onClick={() => call()}>Test Random Error</button>
+<button onClick={() => timeoutCall(5)}>Test Timeout</button>
+<button onClick={() => notFoundCall()}>Test 404 Error</button>`;
 
   return (
     <>
@@ -134,22 +133,13 @@ const { data, error, isLoading, call } = useMegamind(triggerError, {
         </div>
 
         <div className="example-controls">
-          <h4>🔍 HTTP Error Types:</h4>
-          <select 
-            value={errorType} 
-            onChange={(e) => setErrorType(e.target.value)}
-          >
-            <option value="404">404 - Not Found</option>
-            <option value="500">500 - Server Error</option>
-            <option value="401">401 - Unauthorized</option>
-            <option value="403">403 - Forbidden</option>
-          </select>
+          <h4>🎲 Random Error Test:</h4>
           <button 
-            onClick={() => triggerErrorCall(errorType)}
-            disabled={errorLoading}
+            onClick={() => triggerRandomErrorCall()}
+            disabled={randomErrorLoading}
             className="test-button"
           >
-            {errorLoading ? 'Testing...' : `Test ${errorType} Error`}
+            {randomErrorLoading ? 'Testing...' : 'Test Random Error'}
           </button>
         </div>
 
@@ -174,28 +164,28 @@ const { data, error, isLoading, call } = useMegamind(triggerError, {
         </div>
 
         <div className="example-controls">
-          <h4>🔥 Server Error Test:</h4>
+          <h4>🚫 404 Error Test:</h4>
           <button 
-            onClick={() => triggerServerCall()}
-            disabled={serverLoading}
+            onClick={() => triggerNotFoundCall()}
+            disabled={notFoundLoading}
             className="test-button"
           >
-            {serverLoading ? 'Testing...' : 'Test Server Error'}
+            {notFoundLoading ? 'Testing...' : 'Test 404 Error'}
           </button>
         </div>
         
         <div className="result-box">
           <div>
-            <strong>HTTP Error - Loading:</strong> {errorLoading ? 'Yes' : 'No'}
+            <strong>Random Error - Loading:</strong> {randomErrorLoading ? 'Yes' : 'No'}
           </div>
           <div>
-            <strong>HTTP Error - Data:</strong> {JSON.stringify(errorData, null, 2)}
+            <strong>Random Error - Data:</strong> {JSON.stringify(randomErrorData, null, 2)}
           </div>
           <div>
-            <strong>HTTP Error - Error:</strong> {errorError ? JSON.stringify({
-              status: errorError.response?.status,
-              message: errorError.response?.data?.message || errorError.message,
-              type: errorError.code
+            <strong>Random Error - Error:</strong> {randomError ? JSON.stringify({
+              status: randomError.response?.status,
+              message: randomError.response?.data?.message || randomError.message,
+              type: randomError.code
             }, null, 2) : 'null'}
           </div>
           
@@ -218,15 +208,15 @@ const { data, error, isLoading, call } = useMegamind(triggerError, {
           <hr />
           
           <div>
-            <strong>Server Error - Loading:</strong> {serverLoading ? 'Yes' : 'No'}
+            <strong>404 Error - Loading:</strong> {notFoundLoading ? 'Yes' : 'No'}
           </div>
           <div>
-            <strong>Server Error - Data:</strong> {JSON.stringify(serverData, null, 2)}
+            <strong>404 Error - Data:</strong> {JSON.stringify(notFoundData, null, 2)}
           </div>
           <div>
-            <strong>Server Error - Error:</strong> {serverError ? JSON.stringify({
-              status: serverError.response?.status,
-              message: serverError.response?.data?.message || serverError.message
+            <strong>404 Error - Error:</strong> {notFoundError ? JSON.stringify({
+              status: notFoundError.response?.status,
+              message: notFoundError.response?.data?.message || notFoundError.message
             }, null, 2) : 'null'}
           </div>
         </div>
@@ -235,8 +225,8 @@ const { data, error, isLoading, call } = useMegamind(triggerError, {
           <p><strong>📋 Requirements:</strong></p>
           <ul>
             <li>Start the test server: <code>node server.js</code></li>
-            <li>Server should be running on http://localhost:3001</li>
-            <li>Endpoints: GET /api/error/:type, GET /api/timeout/:seconds, GET /api/server-error</li>
+            <li>Server should be running on http://localhost:15001</li>
+            <li>Endpoints: GET /api/random-error, GET /api/delayed/:ms, GET /api/nonexistent-endpoint</li>
             <li>Check browser console for error handling logs</li>
           </ul>
         </div>
@@ -252,4 +242,4 @@ const { data, error, isLoading, call } = useMegamind(triggerError, {
   );
 };
 
-export default ApiErrorExample; 
+export default ApiErrorExample;

@@ -275,42 +275,110 @@ export default function Home() {
 
 ## Development
 
-### Running Examples
+### 🚀 Quick Start (Multiple Ways)
 
-1. **Setup all dependencies:**
-   ```bash
-   npm run setup
-   ```
+#### Option 1: Using the Run Script (Easiest)
+```bash
+# Make script executable (one-time setup)
+chmod +x run.sh
 
-2. **Run examples with live server:**
-   ```bash
-   npm run examples
-   ```
-   This starts both the Express server (port 3001) and React app (port 3000) concurrently.
+# Start everything (builds library + runs both server & client)
+./run.sh
 
-3. **Individual development:**
-   ```bash
-   # Server only
-   cd examples/server && npm start
-   
-   # React app only
-   cd examples/react-app && npm start
-   ```
+# Or specific commands:
+./run.sh setup    # Install all dependencies
+./run.sh build    # Build library only
+./run.sh examples # Run examples only
+./run.sh help     # See all options
+```
 
-### Project Structure
+#### Option 2: Using NPM/Yarn Scripts
+```bash
+# Complete workflow
+npm run setup      # Install all dependencies
+npm start          # Build + run examples
+
+# Individual commands
+npm run build      # Build library only
+npm run examples   # Run both server + client
+npm run server     # Run server only (port 3001)
+npm run client     # Run client only (port 3000)
+npm run dev        # Same as 'start'
+npm run test       # Same as 'examples'
+```
+
+#### Option 3: Manual Setup
+```bash
+# Install dependencies manually
+yarn install
+cd examples/server && yarn install
+cd ../react-app && yarn install
+cd ../..
+
+# Build and run
+yarn build
+yarn examples
+```
+
+### 🎯 Available Scripts
+
+| Script | Command | Description |
+|--------|---------|-------------|
+| **Setup** | `npm run setup` | Install all dependencies |
+| **Start** | `npm start` | Build library + run examples |
+| **Examples** | `npm run examples` | Run server + client concurrently |
+| **Build** | `npm run build` | Build the library only |
+| **Dev** | `npm run dev` | Development mode (same as start) |
+| **Server** | `npm run server` | Run test server only |
+| **Client** | `npm run client` | Run React app only |
+| **Clean** | `npm run clean` | Remove all build files & deps |
+| **Reset** | `npm run reset` | Clean + setup from scratch |
+
+### 🌐 Accessing the Applications
+
+- **React App**: http://localhost:3000 (Main testing interface)
+- **API Server**: http://localhost:3001 (Test endpoints)
+- **API Docs**: http://localhost:3001 (Server info & endpoints)
+
+### 📁 Project Structure
 ```
 ├── src/use-megamind.tsx       # Main hook implementation
 ├── examples/
-│   ├── server/                # Express test server
-│   └── react-app/            # React example application
+│   ├── server/                # Express test server (port 3001)
+│   └── react-app/            # React example app (port 3000)
+│       └── components/        # 15 test components
 ├── dist/                     # Built library files
+├── run.sh                    # Easy development script
 └── package.json              # Library configuration
 ```
 
-### Building the Library
+### 🧪 Test Coverage
+
+- **Basic Examples (8)**: Core functionality, parameters, options
+- **API Examples (3)**: Real HTTP requests with test server
+- **Edge Cases (4)**: Advanced scenarios, race conditions, memory tests
+
+## 🛠️ Development Tips
+
+### Hot Reload Development
 ```bash
-npm run build
+# Terminal 1: Watch mode for library
+npm run build:watch
+
+# Terminal 2: Run examples
+npm run examples
 ```
+
+### Debugging
+- Enable debug logs in examples (check browser console)
+- Server logs show all API requests
+- React DevTools for hook state inspection
+
+### Testing New Features
+1. Modify `src/use-megamind.tsx`
+2. Build: `npm run build`
+3. Test in React app: `npm run examples`
+4. Check both basic and edge case examples
 
 ## Contribution
 
