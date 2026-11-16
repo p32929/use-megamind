@@ -1,6 +1,8 @@
 # use-megamind
 
-A simple React hook for managing asynchronous function calls with ease on the client side, now with global validation, append functionality, and more.
+A small React hook that runs any async function for you and gives back `data`, `error` and `isLoading`, with options like call limits, delays, caching and appending results.
+
+Libraries like React Query are great, but they are big and take time to learn. use-megamind does the everyday part in one hook you can drop into an existing project in minutes, and it works for any async call, not only data fetching. It has no dependencies of its own, only React.
 
 On npm: **[use-megamind](https://www.npmjs.com/package/use-megamind)**
 
@@ -16,16 +18,12 @@ or
 yarn add use-megamind
 ```
 
-## Motivation
-
-The goal behind `use-megamind` was to build a custom solution for managing asynchronous operations that’s simple to implement, especially in existing projects. It works not only for data fetching but for any kind of async operation, making it a more lightweight alternative to React Query. While React Query is awesome, I wanted a solution that doesn't require extensive documentation to get started. `use-megamind` is small, efficient, and does the job without extra complexity.
-
 ## Global Configuration
 
 You can now set global validation logic for all `useMegamind` instances via the following functions:
 
-- `setGlobalValidateOnSuccess`: Define a global function to validate the result of a successful async call.
-- `setGlobalValidateOnError`: Define a global function to validate errors during an async call.
+1. `setGlobalValidateOnSuccess`: Define a global function to validate the result of a successful async call.
+2. `setGlobalValidateOnError`: Define a global function to validate errors during an async call.
 
 These validations will run across all hooks unless overridden locally in individual hooks.
 
@@ -125,11 +123,11 @@ export default function Home() {
 
 `useMegamind` provides a variety of options to control behavior:
 
-- `maxCalls`: Maximum number of times the async function can be called (Default: `'infinite'`)
-- `minimumDelayBetweenCalls`: Minimum delay between two consecutive calls (Default: `0ms`)
-- `debug`: Enable debug logging (Default: `false`)
-- `callRightAway`: Whether to call the async function when the component mounts (Default: `true`)
-- `cache`: Cache response until the page is reloaded (Default: `false`)
+1. `maxCalls`: Maximum number of times the async function can be called (Default: `'infinite'`)
+2. `minimumDelayBetweenCalls`: Minimum delay between two consecutive calls (Default: `0ms`)
+3. `debug`: Enable debug logging (Default: `false`)
+4. `callRightAway`: Whether to call the async function when the component mounts (Default: `true`)
+5. `cache`: Cache response until the page is reloaded (Default: `false`)
 
 ```ts
 "use client";
@@ -244,8 +242,8 @@ export default function Home() {
 
 ### Example 7: Clearing or resetting state
 
-- `clear`: Clears the state but keeps the cache.
-- `reset`: Resets everything, including the cache and call counter.
+1. `clear`: Clears the state but keeps the cache.
+2. `reset`: Resets everything, including the cache and call counter.
 
 ```ts
 "use client";
@@ -281,43 +279,12 @@ MIT License — Copyright (c) Fayaz Bin Salam. See [LICENSE](LICENSE) for the fu
 
 ## Contributing
 
-Contributions are warmly welcomed and greatly appreciated! Whether it's a bug fix, new feature, or improvement, your input helps make this project better for everyone.
-
-Before submitting a pull request, please:
-
-1. Create an issue describing the feature or bug fix you'd like to work on
-2. Wait for discussion and approval to ensure alignment with project goals
-3. Fork the repository and create your feature branch
-4. Submit your pull request with a clear description of changes
-
-This approach helps avoid duplicate efforts and ensures smooth collaboration. Thank you for considering contributing!
+Contributions are very welcome, thank you! Before you start on a pull request, please open an issue and tell me what you would like to add or change. That way we can agree on it first, and your time is not wasted on something that might not fit. Thanks for helping make use-megamind better.
 
 ## Share
 
-Sharing this repository with your friends is just one click away from here
+<a href="https://p32929.github.io/share/?repo=use-megamind"><img src="https://p32929.github.io/readme/share.svg" alt="Share this with your friends in just a click" width="420"></a>
 
-[![facebook](https://user-images.githubusercontent.com/6418354/179013321-ac1d1452-0689-493f-9066-940cf2302b6e.png)](https://www.facebook.com/sharer/sharer.php?u=https://github.com/p32929/use-megamind/)
-[![twitter](https://user-images.githubusercontent.com/6418354/179013351-7d8d6d1c-4ce2-46ab-bef8-4c4765a1b888.png)](https://twitter.com/intent/tweet?url=https://github.com/p32929/use-megamind/)
-[![tumblr](https://user-images.githubusercontent.com/6418354/179013343-3111f55a-3b90-40c7-8487-9777348672b0.png)](https://www.tumblr.com/share?v=3&u=https://github.com/p32929/use-megamind/)
-[![pocket](https://user-images.githubusercontent.com/6418354/179013334-b095c45f-becf-49f4-9ee1-5a731a9b1f85.png)](https://getpocket.com/save?url=https://github.com/p32929/use-megamind/)
-[![pinterest](https://user-images.githubusercontent.com/6418354/179013331-44cd9206-11b1-4b65-becb-5863b61c828f.png)](https://pinterest.com/pin/create/button/?url=https://github.com/p32929/use-megamind/)
-[![reddit](https://user-images.githubusercontent.com/6418354/179013338-7416ae3f-73ba-4522-86e1-1374d7082d22.png)](https://www.reddit.com/submit?url=https://github.com/p32929/use-megamind/)
-[![linkedin](https://user-images.githubusercontent.com/6418354/179013327-ca7b7102-1da8-4b1c-858f-1a6e5f21bd70.png)](https://www.linkedin.com/shareArticle?mini=true&url=https://github.com/p32929/use-megamind/)
-[![whatsapp](https://user-images.githubusercontent.com/6418354/179013353-f477fa0b-3e6f-4138-a357-c9991b23ff88.png)](https://api.whatsapp.com/send?text=https://github.com/p32929/use-megamind/)
+## Support
 
-<!-- hire-block -->
-
----
-
-## 💼 Using this at a company?
-
-I do fixed-price delivery work on my own projects. One invoice, one date, no hourly billing:
-
-| | |
-|---|---|
-| **White-label build** — this project rebranded, extended and deployed as yours | **$6,500** · 3 weeks |
-| **Custom app from scratch** on my own stack, signed and auto-updating | **$12,500** · 6 weeks |
-| **Production-hardening sprint** — 72 hours on this project, for your load and your security review | **$999** |
-| **Ongoing capacity** — one project-week of my time reserved every month | **$9,000 / month** |
-
-Full details → **[p32929.github.io/hire](https://p32929.github.io/hire/)** · Email **[fayazdevinbox@uberip.com](mailto:fayazdevinbox@uberip.com)** — scoping and quotes are free and I answer within one business day.
+<a href="https://p32929.github.io/support/"><img src="https://p32929.github.io/readme/support.svg" alt="If you like my works and want to support me, feel free to support" width="420"></a>
